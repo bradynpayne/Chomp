@@ -32,7 +32,9 @@ public class MyPlayer {
 
 
     }
-    public void bestMove(int x, int y, int z) {
+    public int[] bestMove(int x, int y, int z) {
+        int chooseX = 0;
+        int chooseY = 0;
         Integer[] chosen = {0,0,0};
         Integer[] input = {x,y,z};
         Integer[] difference = {0,0,0};
@@ -44,7 +46,6 @@ public class MyPlayer {
                 if(Arrays.equals(p, q)) {
                     chosen = q;
                     move = true;
-
                 }
             }
         }
@@ -52,9 +53,38 @@ public class MyPlayer {
             for (int i = 0; i < input.length; i++) {
                 difference[i] = input[i] - chosen[i];
             }
+            //THIS IS WHAT NEEDS WORK
+            for(int m = 0; m < input.length; m++) {
+                if(difference[m] != 0) {
+                    chooseY = m;
+                    chooseX = chosen[m];
+                    int[] bestMove = {chooseX,chooseY};
+                    return(bestMove);
+                }
+            }
+
+//            for (int m = input.length - 1; m > -1; m--) {
+//                if(difference[m] == 0 && input[m] != 0) {
+//                    chooseX = m+1;
+//                    chooseY = chosen[m+1];
+//                } else {
+//                    chooseX = 0;
+//                    chooseY = chosen[0];
+//                }
+
+
+
         } else {
             System.out.println("No Best choice");
+            chooseY = 0;
+            chooseX = 0;
+            int[] bestMove = {chooseX, chooseY};
+            return (bestMove);
         }
+
+        return(new int[]{1, 2, 3});
+
+
 
 
     }
@@ -71,15 +101,13 @@ public class MyPlayer {
 
     public ArrayList<Integer[]> possibleMoves(int x, int y, int z) {
         // Array able to be iterated thru w/ the initial values
-        boolean hooray = false;
-        boolean twoonezero = false;
         int[] setUp = {x, y, z};
         ArrayList<Integer[]> outputs = new ArrayList<Integer[]>();
 
-        System.out.println("Possible boards from board: " +x+"-"+y+"-"+z);
+        //System.out.println("Possible boards from board: " +x+"-"+y+"-"+z);
 
         // For each column
-        for(int q = 1; q < setUp.length + 1; q++) {
+        for (int q = 1; q < setUp.length + 1; q++) {
             // For each square in that column
             for (int o = 1; o < setUp[q - 1] + 1; o++) {
                 // Array with the results that is reset before, and will be updated
@@ -92,39 +120,17 @@ public class MyPlayer {
                         results[i] = o - 1;
                     }
                 }
-//                if(results[0] == 1 && results[1] == 0 && results[2] == 0) {
-//                    hooray = true;
-//                }
-//                if(results[0] == 2 && results[1] == 1 && results[2] == 0) {
-//                    hooray = true;
-//                }
-//                if(results[0] == 2 && results[1] == 2 && results[2] == 1) {
-//                    hooray = true;
-//                }
-//                if(results[0] == 3 && results[1] == 1 && results[2]==1) {
-//                    hooray = true;
-//                }
-//                if(results[0] == 3 && results[1] == 2 && results[2]==0) {
-//                    hooray = true;
-//                }
-                if(results[0] == 0 && results[1] == 0 && results[2] == 0 ) {
+
+                if (results[0] == 0 && results[1] == 0 && results[2] == 0) {
                     continue;
                 } else {
                     Integer[] out = {results[0], results[1], results[2]};
                     outputs.add(out);
-                    System.out.println(results[0] + "-" + results[1] + "-" + results[2]);
                 }
             }
         }
         return outputs;
-//        if(hooray == true) {
-//            System.out.println("Hooray!");
-//        }
-//        if(twoonezero == true) {
-//            System.out.println("210 IS A POSSIBILITY");
-//        }
     }
-
     public void movesFromPossible() {
         for(int x = 1; x < 4; x++) {
             for(int y = 0; y < x+1; y++) {
@@ -135,6 +141,21 @@ public class MyPlayer {
         }
     }
 
+    public int[] changeBoardFormat(Chip[][] board) {
+        ArrayList<Integer> newFormat = new ArrayList<Integer>();
+        for (int col = 0; col < board[0].length; col++) {
+            Integer count = 0;
+            for (int row = 0; row < board.length; row++) {
+                if (board[row][col].isAlive) {
+                    count = count + 1;
+                }
+            }
+            newFormat.add(count);
+        }
+        int[] work = {newFormat.get(0).intValue(), newFormat.get(1).intValue(), newFormat.get(2).intValue()};
+
+        return(work);
+    }
 
 
 
@@ -147,17 +168,17 @@ public class MyPlayer {
 
 
         gameBoard = pBoard;
-        int column = 0;
-        int row = 0;
+//        int column = 0;
+//        int row = 0;
+        int[] newBoard = changeBoardFormat(pBoard);
+        int[] theMove = bestMove(newBoard[0], newBoard[1], newBoard[2]);
+        System.out.println(theMove[0]+"-"+theMove[1]);
 
-        row = 1;
-        column = 1;
-
-        Point myMove = new Point(row, column);
+        Point myMove = new Point(theMove[0], theMove[1]);
         //Generate();
         //possibleMoves(3,2,1);
         //movesFromPossible();
-        bestMove(3,2,1);
+        //bestMove(3,0,0);
         return myMove;
     }
 
