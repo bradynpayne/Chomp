@@ -6,14 +6,11 @@ public class MyPlayer {
     public Chip[][] gameBoard;
     public int[] columns;
 
+    // creates an arraylist of all the losing boards
     public ArrayList<int[]> losing = Losing();
-
-    ArrayList<Board> allBoards = new ArrayList<>();
-
 
     public MyPlayer() {
         columns = new int[10];
-        //Generate();
     }
 
 //    public void Generate() {
@@ -35,16 +32,17 @@ public class MyPlayer {
 
  //   }
     public int[] bestMove(Board Board) {
+        // finds the best move for a given board
         int chooseX;
         int chooseY;
-        int[] chosen = new int[Board.state.length - 1];
+        int[] chosen = new int[Board.state.length];
         int[] input = Board.state;
-        int[] difference = new int[Board.state.length - 1];
+        int[] difference = new int[Board.state.length];
         boolean move = false;
 
         ArrayList<int[]> possible = possibleMoves(Board);
         for(int[] q: possible) {
-            System.out.println(q[0] +"-"+q[1]+"-"+q[2]+"-"+q[3]+"-"+q[4]+"-"+q[5]+"-"+q[6]+"-"+q[7]+"-"+q[8]+"-"+q[9]);
+            //System.out.println(q[0] +"-"+q[1]+"-"+q[2]+"-"+q[3]+"-"+q[4]+"-"+q[5]+"-"+q[6]+"-"+q[7]+"-"+q[8]+"-"+q[9]);
             for(int[] p: losing) {
                 if(Arrays.equals(p, q)) {
                     chosen = q;
@@ -67,14 +65,14 @@ public class MyPlayer {
 
 
         } else {
-            System.out.println("No Best choice");
+//            System.out.println("No Best choice");
             chooseY = 0;
             chooseX = 0;
             int[] bestMove = {chooseX, chooseY};
             return (bestMove);
         }
 
-        System.out.println("Should never be here!");
+//        System.out.println("Should never be here!");
         return(new int[]{1, 2, 3});
 
 
@@ -83,9 +81,10 @@ public class MyPlayer {
     }
 
     public ArrayList<int[]> Losing() {
+        // find all losing boards
         ArrayList<int[]> losing = new ArrayList<int[]>();
         for(int x = 1; x < 11; x++) {
-            System.out.println("Part one");
+//            System.out.println("Part one");
             for (int y = 0; y < x + 1; y++) {
                 for (int z = 0; z < y + 1; z++) {
                     for(int q = 0; q < z + 1; q++) {
@@ -122,14 +121,9 @@ public class MyPlayer {
 
         }
 
-
-//        losing.add(new int[] {2,1,0,0,0,0,0,0,0,0});
-//        losing.add(new int[] {2,1,1,0,0,0,0,0,0,0});
-//        losing.add(new int[] {3,1,1,0,0,0,0,0,0,0});
-//        losing.add(new int[] {3,2,0,0,0,0,0,0,0,0});
-        for(int[] b : losing) {
-            System.out.println(b[0]+"-"+b[1]+"-"+b[2] + "-" + b[3] + "-" + b[4] + "-" + b[5] + "-" + b[6] + "-" + b[8] + "-" + b[9]);
-        }
+//        for(int[] b : losing) {
+//            System.out.println(b[0]+"-"+b[1]+"-"+b[2] + "-" + b[3] + "-" + b[4] + "-" + b[5] + "-" + b[6] + "-" + b[8] + "-" + b[9]);
+//        }
         return losing;
     }
 
@@ -139,10 +133,6 @@ public class MyPlayer {
 
         boolean skip = true;
         ArrayList<int[]> outputs = new ArrayList<int[]>();
-
-        int[] bad = {0,0,0,0,0,0,0,0,0,0};
-
-        //System.out.println("Possible boards from board: " +x+"-"+y+"-"+z);
 
         // For each column
 
@@ -162,20 +152,18 @@ public class MyPlayer {
                 }
 
                 if (skip == true) {
- //                   System.out.println("Board:" + Board.state[0] + "-" + Board.state[1] + "-" + Board.state[2]);
- //                   System.out.println("I'm not adding this one");
                     skip = false;
                 } else {
                     outputs.add(results);
-  //                  System.out.println(results[0] + "-" + results[1] + "-" + results[2] + "-" + results[3] + "-" + results[4]);
                 }
             }
         }
-       // System.out.println(outputs.get(0) + "  " + outputs.get(1));
         return outputs;
     }
 
     public Board changeBoardFormat(Chip[][] board) {
+        // Changes board format from a 2d arraylist of chips either alive or dead to an array of integers
+        // for each number of chips in each column
         ArrayList<Integer> newFormat = new ArrayList<Integer>();
         for (int col = 0; col < board[0].length; col++) {
             Integer count = 0;
@@ -196,39 +184,21 @@ public class MyPlayer {
 
 
 
-
-    //add your code to return the row and the column of the chip you want to take.
-    //you'll be returning a data type called Point which consists of two integers.
     public Point move(Chip[][] pBoard) {
 
-        // Define in terms of colunms --- 3-3-3, 3-3-2, 4-4-1
-
-
+        // gameBoard is the arraylist of chips on and off
         gameBoard = pBoard;
-//        int column = 0;
-//        int row = 0;
 
+        // newBoard is now an array of numbers that shows the state of the board
         Board newBoard = changeBoardFormat(pBoard);
-        int[] theMove = bestMove(newBoard);
-        System.out.println(theMove[0]+"-"+theMove[1]);
 
-//        Point myMove = new Point(1,1);
+        // theMove is now an int array of 2 integers that give the x and y coordinates of the best move
+        int[] theMove = bestMove(newBoard);
+
+        // point myMove has coordinates of this point
         Point myMove = new Point(theMove[0], theMove[1]);
 
- //       Board newBoard = new Board(new int[]{3,3,3,0,0,0,0,0,0,0});
-
-//        ArrayList<int[]> outputs = possibleMoves(newBoard);
-        ArrayList<int[]> x = Losing();
-
-        //Point myMove = new Point(1,1);
-        //Board newBoard = new Board(new int[]{3, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-        //ArrayList<int[]> possible = possibleMoves(newBoard);
-        //for(int[] x : possible) {
-        //    System.out.println(x[0] + "-" + x[1] + "-" + x[2]+"-"+x[3]+"-"+x[4]);
-        //}
-        //possibleMoves(3,2,1);
-        //movesFromPossible();
-        //bestMove(3,0,0);
+        // return myMove as the coordinates to play
         return myMove;
     }
 
