@@ -7,7 +7,9 @@ public class MyPlayer {
     public int[] columns;
 
     // creates an arraylist of all the losing boards
-    public ArrayList<int[]> losing = Losing();
+    public ArrayList<int[]> losing = new ArrayList<>();
+    //Calls losing
+    public int L = Losing();
 
     public MyPlayer() {
         columns = new int[10];
@@ -67,7 +69,7 @@ public class MyPlayer {
         } else {
 //            System.out.println("No Best choice");
             chooseY = 0;
-            chooseX = 0;
+            chooseX = Board.state[0] - 1;
             int[] bestMove = {chooseX, chooseY};
             return (bestMove);
         }
@@ -80,7 +82,7 @@ public class MyPlayer {
 
     }
 
-    public ArrayList<int[]> Losing() {
+    public int Losing() {
         // find all losing boards
         ArrayList<int[]> losing = new ArrayList<int[]>();
         for(int x = 1; x < 11; x++) {
@@ -94,21 +96,9 @@ public class MyPlayer {
                                     for (int e = 0; e < s + 1; e++) {
                                         for (int r = 0; r < e + 1; r++) {
                                             for (int w = 0; w < r + 1; w++) {
-                                                boolean loser = true;
                                                 Board b = new Board(new int[]{x, y, z, q, t, p, s, e, r, w});
-                                                ArrayList<int[]> bOutputs = possibleMoves(b);
+                                                pMoves(b);
 
-                                                for (int[] possibility : bOutputs) {
-                                                    for (int[] loss : losing) {
-                                                        if (Arrays.equals(possibility, loss)) {
-                                                            loser = false;
-                                                        }
-                                                    }
-
-                                                }
-                                                if (loser == true) {
-                                                    losing.add(b.state);
-                                                }
                                             }
                                         }
                                     }
@@ -124,7 +114,45 @@ public class MyPlayer {
 //        for(int[] b : losing) {
 //            System.out.println(b[0]+"-"+b[1]+"-"+b[2] + "-" + b[3] + "-" + b[4] + "-" + b[5] + "-" + b[6] + "-" + b[8] + "-" + b[9]);
 //        }
-        return losing;
+        return 1;
+    }
+    public void pMoves(Board Board) {
+        // Array able to be iterated thru w/ the initial values
+        int[] setUp = Board.state;
+
+        boolean skip = true;
+
+        // For each column
+
+        for (int q = 0; q < setUp.length; q++) {
+            // For each square in that column
+            for (int o = 1; o < setUp[q] + 1; o++) {
+
+                // Array with the results that is reset before, and will be updated
+                int[] results = setUp.clone();
+                // Results for the row being changed = square chosen - 1
+                results[q] = o - 1;
+                // For the other columns: if same number as taken or greater, subtract 1
+                for (int i = q + 1; i < setUp.length; i++) {
+                    if (setUp[i] > results[q] - 1) {
+                        results[i] = o - 1;
+                    }
+                }
+
+                if (skip == true) {
+                    skip = false;
+                } else {
+                    for(int[] loss: losing) {
+                        if (Arrays.equals(loss, results)) {
+                            return;
+
+                        }
+                    }
+                }
+            }
+        }
+        losing.add(Board.state);
+        System.out.println(Board.state[0] + "-" + Board.state[1] + "-" + Board.state[2] + "-" + Board.state[3] + "-" + Board.state[4] + "-" + Board.state[5] + "-" + Board.state[6] + "-" + Board.state[7] + "-" + Board.state[8] + "-" + Board.state[9]);
     }
 
     public ArrayList<int[]> possibleMoves(Board Board) {
