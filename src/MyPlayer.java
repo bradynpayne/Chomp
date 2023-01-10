@@ -44,7 +44,6 @@ public class MyPlayer {
 
         ArrayList<int[]> possible = possibleMoves(Board);
         for(int[] q: possible) {
-            //System.out.println(q[0] +"-"+q[1]+"-"+q[2]+"-"+q[3]+"-"+q[4]+"-"+q[5]+"-"+q[6]+"-"+q[7]+"-"+q[8]+"-"+q[9]);
             for(int[] p: losing) {
                 if(Arrays.equals(p, q)) {
                     chosen = q;
@@ -67,7 +66,6 @@ public class MyPlayer {
 
 
         } else {
-//            System.out.println("No Best choice");
             chooseY = 0;
             chooseX = Board.state[0] - 1;
             int[] bestMove = {chooseX, chooseY};
@@ -86,7 +84,6 @@ public class MyPlayer {
         // find all losing boards
         ArrayList<int[]> losing = new ArrayList<int[]>();
         for(int x = 1; x < 11; x++) {
-//            System.out.println("Part one");
             for (int y = 0; y < x + 1; y++) {
                 for (int z = 0; z < y + 1; z++) {
                     for(int q = 0; q < z + 1; q++) {
@@ -111,9 +108,6 @@ public class MyPlayer {
 
         }
 
-//        for(int[] b : losing) {
-//            System.out.println(b[0]+"-"+b[1]+"-"+b[2] + "-" + b[3] + "-" + b[4] + "-" + b[5] + "-" + b[6] + "-" + b[8] + "-" + b[9]);
-//        }
         return 1;
     }
     public void pMoves(Board Board) {
@@ -152,7 +146,7 @@ public class MyPlayer {
             }
         }
         losing.add(Board.state);
-        System.out.println(Board.state[0] + "-" + Board.state[1] + "-" + Board.state[2] + "-" + Board.state[3] + "-" + Board.state[4] + "-" + Board.state[5] + "-" + Board.state[6] + "-" + Board.state[7] + "-" + Board.state[8] + "-" + Board.state[9]);
+//        System.out.println(Board.state[0] + "-" + Board.state[1] + "-" + Board.state[2] + "-" + Board.state[3] + "-" + Board.state[4] + "-" + Board.state[5] + "-" + Board.state[6] + "-" + Board.state[7] + "-" + Board.state[8] + "-" + Board.state[9]);
     }
 
     public ArrayList<int[]> possibleMoves(Board Board) {
