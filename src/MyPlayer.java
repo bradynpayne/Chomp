@@ -15,73 +15,10 @@ public class MyPlayer {
         columns = new int[10];
     }
 
-//    public void Generate() {
-//        int counter = 0;
-//        System.out.println("HI");
-//        for(int x = 1; x < 4; x++) {
-//            for(int y = 0; y < x+1; y++) {
-//                for(int z = 0; z < y+1; z++) {
-//                    System.out.println(x + "-" + y + "-" + z);
-//                   // allBoards.add(x * 100 + y * 10 + z);
-//                    counter++;
-//
-//                }
-//            }
-//        }
-//        System.out.println(counter);
 
-
-
- //   }
-    public int[] bestMove(Board Board) {
-        // finds the best move for a given board
-        int chooseX;
-        int chooseY;
-        int[] chosen = new int[Board.state.length];
-        int[] input = Board.state;
-        int[] difference = new int[Board.state.length];
-        boolean move = false;
-
-        ArrayList<int[]> possible = possibleMoves(Board);
-        for(int[] q: possible) {
-            for(int[] p: losing) {
-                if(Arrays.equals(p, q)) {
-                    chosen = q;
-                    move = true;
-                }
-            }
-        }
-        if(move == true) {
-            for (int i = 0; i < input.length; i++) {
-                difference[i] = input[i] - chosen[i];
-            }
-            for(int m = 0; m < input.length; m++) {
-                if(difference[m] != 0) {
-                    chooseY = m;
-                    chooseX = chosen[m];
-                    int[] bestMove = {chooseX,chooseY};
-                    return(bestMove);
-                }
-            }
-
-
-        } else {
-            chooseY = 0;
-            chooseX = Board.state[0] - 1;
-            int[] bestMove = {chooseX, chooseY};
-            return (bestMove);
-        }
-
-//        System.out.println("Should never be here!");
-        return(new int[]{1, 2, 3});
-
-
-
-
-    }
-
+// The first two functions, Losing and pMoves are a part of finding the losing boards
     public int Losing() {
-        // find all losing boards
+        // Find every single possible board
         ArrayList<int[]> losing = new ArrayList<int[]>();
         for(int x = 1; x < 11; x++) {
             for (int y = 0; y < x + 1; y++) {
@@ -94,6 +31,12 @@ public class MyPlayer {
                                         for (int r = 0; r < e + 1; r++) {
                                             for (int w = 0; w < r + 1; w++) {
                                                 Board b = new Board(new int[]{x, y, z, q, t, p, s, e, r, w});
+                                                // Each board goes into pMoves, which is a copy of the possible
+                                                // moves function that checks each possible move, and if no move
+                                                // leads to a losing board, that board is also added to the losing
+                                                // board list. I was not able to fully integrate possible moves
+                                                // and pMoves into one function, so both are still neccesary
+                                                // for the program to run.
                                                 pMoves(b);
 
                                             }
@@ -110,6 +53,7 @@ public class MyPlayer {
 
         return 1;
     }
+    // pMoves finds out whether each possible board, input from the Losing function, is winning or losing
     public void pMoves(Board Board) {
         // Array able to be iterated thru w/ the initial values
         int[] setUp = Board.state;
@@ -132,11 +76,13 @@ public class MyPlayer {
                         results[i] = o - 1;
                     }
                 }
-
+// Skips the first board that is generated as a possible, which is taking the poison chip
                 if (skip == true) {
                     skip = false;
                 } else {
                     for(int[] loss: losing) {
+                        // For each board in losing boards, if it is equal to any of the possible boards,
+                        // then this is not a losing board and should skip the rest of the function.
                         if (Arrays.equals(loss, results)) {
                             return;
 
@@ -145,10 +91,97 @@ public class MyPlayer {
                 }
             }
         }
+        // If it has checked every losing board and none of them are achievable from the given board,
+        // add this board to the list of losers
         losing.add(Board.state);
 //        System.out.println(Board.state[0] + "-" + Board.state[1] + "-" + Board.state[2] + "-" + Board.state[3] + "-" + Board.state[4] + "-" + Board.state[5] + "-" + Board.state[6] + "-" + Board.state[7] + "-" + Board.state[8] + "-" + Board.state[9]);
     }
+    // The next four functions, given a board input, find and make the best move
+    public Board changeBoardFormat(Chip[][] board) {
+        // Changes board format from a 2d arraylist of chips either alive or dead to an array of integers
+        // I want it to be represented as the number of chips "alive" in each column
+        ArrayList<Integer> newFormat = new ArrayList<Integer>();
+        for (int col = 0; col < board[0].length; col++) {
+            Integer count = 0;
+            for (int row = 0; row < board.length; row++) {
+                if (board[row][col].isAlive) {
+                    count = count + 1;
+                }
+            }
+            // Iterates through the columns and rows to find out the number alive in each row.
+            newFormat.add(count);
+        }
 
+        int[] work = new int[board.length];
+        for(int q = 0; q < board.length; q++) {
+            work[q] = newFormat.get(q);
+        }
+        // returns a board with the changed form
+        return(new Board(work));
+    }
+
+    // Best move finds the best move from a given input board and outputs that move
+
+    public int[] bestMove(Board Board) {
+        // finds the best move for a given board
+        int chooseX;
+        int chooseY;
+        int[] chosen = new int[Board.state.length];
+        int[] input = Board.state;
+        int[] difference = new int[Board.state.length];
+        boolean move = false;
+
+        // Does possible moves to find every possible move
+        ArrayList<int[]> possible = possibleMoves(Board);
+
+        // If the possible board matches a losing board, pick that one
+        for(int[] q: possible) {
+            for(int[] p: losing) {
+                if(Arrays.equals(p, q)) {
+                    chosen = q;
+                    move = true;
+                }
+            }
+        }
+        // If there is a move, based on the difference between the boards, calculate the
+        // coordinates of the best move
+        if(move == true) {
+            for (int i = 0; i < input.length; i++) {
+                difference[i] = input[i] - chosen[i];
+            }
+            for(int m = 0; m < input.length; m++) {
+                if(difference[m] != 0) {
+                    chooseY = m;
+                    chooseX = chosen[m];
+                    int[] bestMove = {chooseX,chooseY};
+                    return(bestMove);
+                }
+            }
+
+
+        }
+        // If there is no best move, and it is a losing board, pick the top chip on the first column.
+        // This move will never pick the poison chip unless it is the only move left, because if there
+        // is nothing above the poision chip, it is either a winning board or the only chip left.
+        else {
+            chooseY = 0;
+            chooseX = Board.state[0] - 1;
+            int[] bestMove = {chooseX, chooseY};
+            return (bestMove);
+        }
+
+//        System.out.println("Should never be here!");
+
+        // If the code gets here, from debugging, something is very wrong.
+        return(new int[]{1, 2, 3});
+
+
+
+
+    }
+
+    // possibleMoves is used to find the possible moves from a given board.
+    // used as a part of the bestMoves function
     public ArrayList<int[]> possibleMoves(Board Board) {
         // Array able to be iterated thru w/ the initial values
         int[] setUp = Board.state;
@@ -183,29 +216,7 @@ public class MyPlayer {
         return outputs;
     }
 
-    public Board changeBoardFormat(Chip[][] board) {
-        // Changes board format from a 2d arraylist of chips either alive or dead to an array of integers
-        // for each number of chips in each column
-        ArrayList<Integer> newFormat = new ArrayList<Integer>();
-        for (int col = 0; col < board[0].length; col++) {
-            Integer count = 0;
-            for (int row = 0; row < board.length; row++) {
-                if (board[row][col].isAlive) {
-                    count = count + 1;
-                }
-            }
-            newFormat.add(count);
-        }
-
-        int[] work = new int[board.length];
-        for(int q = 0; q < board.length; q++) {
-            work[q] = newFormat.get(q);
-        }
-        return(new Board(work));
-    }
-
-
-
+// the move function makes the moves itself.
     public Point move(Chip[][] pBoard) {
 
         // gameBoard is the arraylist of chips on and off
